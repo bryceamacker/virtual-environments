@@ -15,6 +15,9 @@ sh -c "echo 'deb ${REPO_URL}/x${NAME}_${VERSION_ID}/ /' > /etc/apt/sources.list.
 wget -qnv https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/x${NAME}_${VERSION_ID}/Release.key -O Release.key
 apt-key add Release.key
 apt-get update -qq
+echo "resolvconf resolvconf/linkify-resolvconf boolean false" | debconf-set-selections
+apt-get --yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
+apt-get --yes --force-yes -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade
 apt-get -qq -y install ${install_packages[@]}
 mkdir -p /etc/containers
 echo -e "[registries.search]\nregistries = ['docker.io', 'quay.io']" | tee /etc/containers/registries.conf
